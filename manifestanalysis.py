@@ -1,5 +1,7 @@
-from bs4 import BeautifulSoup as bs
+from glob import glob
+
 import yaml
+from bs4 import BeautifulSoup as bs
 
 '''
 # decompile apk (APKTool)
@@ -15,6 +17,10 @@ def meta_constructor(loader, node):
     '''
     value = loader.construct_mapping(node)
     return value
+
+
+yaml.add_constructor(u'tag:yaml.org,2002:brut.androlib.meta.MetaInfo',
+                     meta_constructor)  # This makes sure yaml doesn't break
 
 
 def analyze_permissions(soup: bs) -> list:
@@ -74,8 +80,12 @@ def analysis(path: str) -> dict:
         }
         dict['manifest'] = manifest
     with open(apkt_yaml, encoding='utf-8') as apktool_info:
-        yaml.add_constructor(u'tag:yaml.org,2002:brut.androlib.meta.MetaInfo',
-                             meta_constructor)
         apkinfo = yaml.load(apktool_info, Loader=yaml.FullLoader)
-        dict['sdkInfo'] = apkinfo['sdkInfo']
+        dict['sdkInfo'] = apkinfo['sdkInfo']  # no methods cause it's a dict
     return dict
+
+
+def bulk_handler(path: str):
+    dirs = glob(f'{path}/*/')
+    for dir in dirs:
+        print(analysis(dir))
