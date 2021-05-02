@@ -1,0 +1,24 @@
+!!brut.androlib.meta.MetaInfo
+apkFileName: 1311184772_com.olsoft.sa.ntvplus.apk
+compressionType: false
+doNotCompress:
+- resources.arsc
+- png
+isFrameworkApk: false
+packageInfo:
+  forcedPackageId: '127'
+  renameManifestPackage: null
+sdkInfo:
+  minSdkVersion: '4'
+  targetSdkVersion: '7'
+sharedLibrary: false
+sparseResources: true
+unknownFiles: {}
+usesFramework:
+  ids:
+  - 1
+  tag: null
+version: 2.5.0
+versionInfo:
+  versionCode: '3'
+  versionName: 0.9.0711
