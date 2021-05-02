@@ -45,6 +45,13 @@ class Analysis:
         self.total_paths = len(target_filepaths)
         self.thread = Thread(target=self.bulk_analyze)
 
+    def manifest_name(self, soup: bs) -> list:
+        '''
+        analyzes a soup file to locate the manifest name
+        '''
+        manifest = soup.find('manifest')
+        return manifest.get('package')
+
     def analyze_permissions(self, soup: bs) -> list:
         '''
         Analyzes a soup file to locate app permissions
@@ -92,6 +99,7 @@ class Analysis:
         print(f'Processing {filepath} and {apkt_yaml}, results to {results}.')
         with open(filepath, encoding='utf-8') as manifest:  # using UTF-8
             soup = bs(manifest, "lxml")
+            dict['package'] = self.manifest_name(soup)
             manifest = {
                 'permissions': self.analyze_permissions(soup),
                 'intents': self.analyze_intents(soup),
@@ -101,11 +109,8 @@ class Analysis:
             dict['manifest'] = manifest
         with open(apkt_yaml, encoding='utf-8') as apktool_info:
             apkinfo = yaml.load(apktool_info, Loader=yaml.FullLoader)
-            dict['sdkInfo'] = apkinfo['sdkInfo']  # no methods, it's a dict
-        with open(results, 'w', encoding='utf-8') as outfile:
-            xml = dicttoxml(dict)
-            dom = parseString(xml)
-            outfile.write(dom.toprettyxml())
+            dict['sdkInfo'] = apkinfo['sdkInfo']  # no methods, a dict
+        self.write_results(results, dict)
 
     def bulk_analyze(self):
         current_file = 1
@@ -114,3 +119,9 @@ class Analysis:
                   f'File {current_file} of {self.total_paths}')
             self.analysis(path)
             current_file += 1
+
+    def write_results(self, results, dict):
+        with open(results, 'w', encoding='utf-8') as outfile:
+            xml = dicttoxml(dict)
+            dom = parseString(xml)
+            outfile.write(dom.toprettyxml())

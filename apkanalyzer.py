@@ -38,7 +38,7 @@ if __name__ == '__main__':
                         help='Specifies the number of threads. Defaults to 1.',
                         type=int, default=1)
     args = parser.parse_args()
-    print(args)
+    # print(args)
     if args.bulk:
         print("bulk processing")
         if args.unpack is not None:
