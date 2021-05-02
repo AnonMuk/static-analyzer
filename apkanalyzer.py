@@ -34,17 +34,21 @@ if __name__ == '__main__':
                         help="To bulk process, use the directory containing " +
                         "ALL target files/folders.",
                         action="store_true")
+    parser.add_argument('-t', '--threads',
+                        help='Specifies the number of threads. Defaults to 1.',
+                        type=int, default=1)
     args = parser.parse_args()
+    print(args)
     if args.bulk:
         print("bulk processing")
         if args.unpack is not None:
-            unpacker.unpacker(args.unpack)
+            unpacker.unpacker(args.unpack, args.threads)
         if args.analyze is not None:
-            manifestanalysis.bulk_handler(args.analyze)
+            manifestanalysis.bulk_handler(args.analyze, args.threads)
     else:
         if args.unpack is not None:
             if args.unpack[-4:] != '.apk':
-                raise ValueError(f'{args.unpack} is not a valid .apk file')
+                parser.error(f'{args.unpack} is not a valid .apk file')
             unpacker.unpack(args.unpack)
         if args.analyze is not None:
             analysis = manifestanalysis.analysis(args.analyze)
