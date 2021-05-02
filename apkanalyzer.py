@@ -1,7 +1,4 @@
 import argparse
-from xml.dom.minidom import parseString
-
-from dicttoxml import dicttoxml
 
 import manifestanalysis
 import unpacker
@@ -47,10 +44,7 @@ if __name__ == '__main__':
     else:
         if args.unpack is not None:
             if args.unpack[-4:] != '.apk':
-                raise argparse.ArgumentTypeError('File must be a .apk')
+                raise ValueError(f'{args.unpack} is not a valid .apk file')
             unpacker.unpack(args.unpack)
         if args.analyze is not None:
             analysis = manifestanalysis.analysis(args.analyze)
-            xml = dicttoxml(analysis)
-            dom = parseString(xml)
-            print(dom.toprettyxml())

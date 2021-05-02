@@ -1,7 +1,9 @@
 from glob import glob
+from xml.dom.minidom import parseString
 
 import yaml
 from bs4 import BeautifulSoup as bs
+from dicttoxml import dicttoxml
 
 '''
 # decompile apk (APKTool)
@@ -63,13 +65,15 @@ def analyze_receivers(soup: bs) -> list:
     return receivers
 
 
-def analysis(path: str) -> dict:
+def analysis(path: str) -> None:
     '''
     takes filepath and does analysis.
     '''
     dict = {}
     filepath = f'{path}/AndroidManifest.xml'
     apkt_yaml = f'{path}/apktool.yml'
+    results = f'{path}/result.xml'
+    print(f'Processing {filepath} and {apkt_yaml}, results to {results}.')
     with open(filepath, encoding='utf-8') as manifest:  # using UTF-8 encoding
         soup = bs(manifest, "lxml")
         manifest = {
@@ -82,10 +86,13 @@ def analysis(path: str) -> dict:
     with open(apkt_yaml, encoding='utf-8') as apktool_info:
         apkinfo = yaml.load(apktool_info, Loader=yaml.FullLoader)
         dict['sdkInfo'] = apkinfo['sdkInfo']  # no methods cause it's a dict
-    return dict
+    with open(results, 'w', encoding='utf-8') as outfile:
+        xml = dicttoxml(dict)
+        dom = parseString(xml)
+        outfile.write(dom.toprettyxml())
 
 
 def bulk_handler(path: str):
     dirs = glob(f'{path}/*/')
     for dir in dirs:
-        print(analysis(dir))
+        analysis(dir)

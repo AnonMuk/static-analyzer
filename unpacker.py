@@ -6,10 +6,7 @@ def unpack(file: str) -> None:
     '''
     Decompiles a file using APKtool
     '''
-    if file[-4:] == '.apk':
-        subprocess.run(["apktool", file], shell=True)
-    else:
-        print("ERROR: NOT AN APK FILE")
+    subprocess.run(["apktool", 'd', '-o', f'{file[:-4]}', file], shell=True)
 
 
 def unpacker(dir):
