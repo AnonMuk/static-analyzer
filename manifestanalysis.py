@@ -74,10 +74,10 @@ class Analysis:
 
     def analyze_services(self, soup: bs) -> list:
         services = []
-        # manifests = soup.find_all('manifest')  # should only be one manifest
-        # for manifest in manifests:
-    #         for permission in manifest.find_all('uses-permission'):
-    #             permissions.append(permission.get('android:name'))
+        manifests = soup.find_all('manifest')  # should only be one manifest
+        for manifest in manifests:
+            for service in manifest.find_all('service'):
+                services.append(service.get('android:name'))
         return services
 
     def analyze_receivers(self, soup: bs) -> list:
