@@ -1,4 +1,5 @@
 import glob
+import os
 import subprocess
 from threading import Thread
 from typing import List
@@ -16,7 +17,8 @@ def unpacker(dir, num_threads):
     Uses apktool to unpack all APKS in folder
     APKTOOL MUST BE ON PATH
     '''
-    apks = glob.glob(f'{dir}/*.apk')
+    globpath = os.path.join(dir, '*.apk')
+    apks = glob.glob(globpath)
     # return apks
     unpackers: List[Unpacker] = []
     for i in range(num_threads):

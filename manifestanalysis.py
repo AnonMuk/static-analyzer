@@ -1,7 +1,8 @@
+import os
 from glob import glob
 from threading import Thread
 from xml.dom.minidom import parseString
-import os
+
 import yaml
 from bs4 import BeautifulSoup as bs
 from dicttoxml import dicttoxml
