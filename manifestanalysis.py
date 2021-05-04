@@ -1,12 +1,12 @@
 from glob import glob
 from threading import Thread
 from xml.dom.minidom import parseString
-
+import os
 import yaml
 from bs4 import BeautifulSoup as bs
 from dicttoxml import dicttoxml
 
-import urlfinder
+import smalianalysis
 
 '''
 # decompile apk (APKTool)
@@ -27,7 +27,8 @@ yaml.add_constructor(u'tag:yaml.org,2002:brut.androlib.meta.MetaInfo',
 
 
 def bulk_handler(path: str, num_threads: int):
-    dirs = glob(f'{path}/*/')
+    globpath = os.path.join(path, '*/')
+    dirs = glob(globpath)
     analyzers = []
     for i in range(num_threads):
         analyzer = Analysis(target_filepaths=dirs[i::num_threads])
@@ -92,9 +93,9 @@ def analysis(path: str) -> None:
     takes filepath and does analysis.
     '''
     dict = {}
-    filepath = f'{path}/AndroidManifest.xml'
-    apkt_yaml = f'{path}/apktool.yml'
-    results = f'{path}/result.xml'
+    filepath = os.path.join(path, 'AndroidManifest.xml')
+    apkt_yaml = os.path.join(path, 'apktool.yml')
+    results = os.path.join(path, 'result.xml')
     # print(f'Processing {filepath} and {apkt_yaml}, results to {results}.')
     with open(filepath, encoding='utf-8') as manifest:  # using UTF-8
         soup = bs(manifest, "lxml")
@@ -109,7 +110,10 @@ def analysis(path: str) -> None:
     with open(apkt_yaml, encoding='utf-8') as apktool_info:
         apkinfo = yaml.load(apktool_info, Loader=yaml.FullLoader)
         dict['sdkInfo'] = apkinfo['sdkInfo']  # no methods, a dict
-    dict['urls'] = urlfinder.get_urls(path)
+    smali_results = smalianalysis.analyze(path)
+    dict['urls'] = smali_results['urls']
+    dict['dangerous_functions'] = smali_results['dangerous']
+    dict['encryption_text'] = smali_results['encryption']
     write_results(results, dict)
     # print(f'{path} processed.')
 
