@@ -28,7 +28,7 @@ yaml.add_constructor(u'tag:yaml.org,2002:brut.androlib.meta.MetaInfo',
 
 
 def bulk_handler(path: str, num_threads: int):
-    globpath = os.path.join(path, '*/')
+    globpath = os.path.join(path, '*', '')
     dirs = glob(globpath)
     analyzers = []
     for i in range(num_threads):

@@ -9,7 +9,7 @@ search = re.compile('http[s]?://(?:[a-zA-Z]|[0-9]|[&-_@.&+]|' +
 
 
 def find_smali(path: str) -> List[str]:
-    filepath = os.path.join(path, '**/*.smali')
+    filepath = os.path.join(path, '**', '*.smali')
     return glob.glob(filepath, recursive=True)
 
 
