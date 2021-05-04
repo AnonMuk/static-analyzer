@@ -1,5 +1,6 @@
 import argparse
 
+import copier
 import manifestanalysis
 import unpacker
 
@@ -37,14 +38,21 @@ if __name__ == '__main__':
     parser.add_argument('-t', '--threads',
                         help='Specifies the number of threads. Defaults to 1.',
                         type=int, default=1)
+    parser.add_argument('-o', '--outfile',
+                        help='output file for bulk analysis, ' +
+                        'defaults to 000_RESULTS',
+                        default='000_RESULTS')
     args = parser.parse_args()
     # print(args)
     if args.bulk:
-        print("bulk processing")
+        print("Bulk Mode Enabled. Go cook a meal and come back.")
         if args.unpack is not None:
+            print("Unpacking APKs...")
             unpacker.unpacker(args.unpack, args.threads)
         if args.analyze is not None:
+            print("Analyzing Files:")
             manifestanalysis.bulk_handler(args.analyze, args.threads)
+            copier.bulkcopy(args.analyze, args.outfile)
     else:
         if args.unpack is not None:
             if args.unpack[-4:] != '.apk':
