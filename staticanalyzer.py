@@ -23,6 +23,7 @@ import unpacker
 Argument parser
 '''
 if __name__ == '__main__':
+    results_file = "00_AnalysisResults"
     parser = argparse.ArgumentParser()
     commands = parser.add_mutually_exclusive_group()
     commands.add_argument('-a', '--analyze', type=str,
@@ -40,8 +41,8 @@ if __name__ == '__main__':
                         type=int, default=1)
     parser.add_argument('-o', '--outfile',
                         help='output file for bulk analysis, ' +
-                        'defaults to 000_RESULTS',
-                        default='000_RESULTS')
+                        f'defaults to {results_file}',
+                        default=results_file)
     args = parser.parse_args()
     # print(args)
     if args.bulk:
