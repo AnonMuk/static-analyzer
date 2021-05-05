@@ -32,6 +32,10 @@ if __name__ == '__main__':
                           "produced by apktool or the -u flag.")
     commands.add_argument('-u', '--unpack',
                           help="Unpack APKs.")
+    commands.add_argument('-f', '--full',
+                          help='Unpack and Process APKs. ' +
+                                'Defaults to 8 APKtool threads and ' +
+                                '1500 profiler threads in bulk mode.')
     parser.add_argument('-b', '--bulk',
                         help="To bulk process, use the directory containing " +
                         "ALL target files/folders.",
@@ -54,6 +58,8 @@ if __name__ == '__main__':
             print("Analyzing Files:")
             manifestanalysis.bulk_handler(args.analyze, args.threads)
             copier.bulkcopy(args.analyze, args.outfile)
+        if args.full is not None:
+            print('bulk analysis does not support full processing.')
     else:
         if args.unpack is not None:
             if args.unpack[-4:] != '.apk':
@@ -61,3 +67,7 @@ if __name__ == '__main__':
             unpacker.unpack(args.unpack)
         if args.analyze is not None:
             analysis = manifestanalysis.analysis(args.analyze)
+        if args.full is not None:
+            unpacker.unpack(args.full)
+            manifestanalysis.analysis(args.full[:-4])
+            copier.copy(args.full[:-4], args.outfile)

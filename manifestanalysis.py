@@ -139,7 +139,7 @@ class Analysis:
                   f'File {current_file} of {self.total_paths}: {path}')
             try:
                 analysis(path)
-            except Exception:
-                print(f'Error on {path}, continuing.')
+            except Exception as e:
+                print(f'Error {e} on {path}, continuing.')
             current_file += 1
         print(f'{self.thread.name} analyzed assigned files.')
