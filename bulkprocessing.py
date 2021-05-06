@@ -40,11 +40,20 @@ class BulkAnalyzer:
         for apk in self.paths:
             apk_path = Path(apk)
             print(f'{self.thread.name}: {count} of {self.total_paths}')
-            print(f'{self.thread.name}: unpacking {apk_path.name}')
-            unpacker.unpack(apk)
-            print(f'{self.thread.name}: analyzing APK')
-            manifestanalysis.analysis(apk[:-4])
-            print(f'{self.thread.name}: Copying Results')
-            copier.copy(apk[:-4], self.outfile)
+            try:
+                print(f'{self.thread.name}: unpacking {apk_path.name}')
+                unpacker.unpack(apk)
+            except:
+                print("Unpacker error. Continuing.")
+            try:
+                print(f'{self.thread.name}: analyzing APK')
+                manifestanalysis.analysis(apk[:-4])
+            except:
+                print('Analysis error. Continuing.')
+            try:
+                print(f'{self.thread.name}: Copying Results')
+                copier.copy(apk[:-4], self.outfile)
+            except:
+                print('Copier error. Continuing.')
             count += 1
         print(f'{self.thread.name} analyzed assigned files.')
