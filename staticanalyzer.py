@@ -6,20 +6,6 @@ import copier
 import manifestanalysis
 import unpacker
 
-# '''
-# Batch analysis for multiple APK folders
-# '''
-# def processor(filepath, csv):
-# 	locations = glob.glob(f'{filepath}/*/AndroidManifest.xml')
-# 	with open(csv, 'w+') as list:
-# 		for location in locations:
-# 			print(f'File: {location}')
-# 			with open(location, encoding='utf-8') as manifest:
-# 				results = manifestanalysis.analyze(manifest)
-# 				if(results[0] == "err"):
-# 					print(f"Error on {location}")
-# 				list.write(f'{results[0]}, {results[1]}, {results[2]}\n')
-
 
 '''
 Argument parser
@@ -64,5 +50,5 @@ if __name__ == '__main__':
         manifestanalysis.analysis(args.full[:-4])
         parent = Path(args.full).parent
         out = parent / args.outfile
-        # print(out)
-        copier.copy(args.full[:-4], str(out))
+        copier.copy(path=args.full[:-4],
+                    outfile=str(out))

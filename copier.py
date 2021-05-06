@@ -1,31 +1,36 @@
 import glob
 import os
 import shutil
+from pathlib import Path
 
 from bs4 import BeautifulSoup as bs4
 
 
-def copy_driver(path, outfile):
+def copy_driver(path, outfile, clever_naming=True):
     results_xml = os.path.join(path, 'result.xml')
-    new_name = path[:-4]  # extracts filename from XML just in case
-    with open(results_xml, encoding='utf-8') as file:
-        soup = bs4(file, 'lxml')
-        new_name = soup.find('package').string
-        cp_result = os.path.join(outfile, f'{new_name}.xml')
-        # print(f'Copying {results_xml} to {cp_result}')
+    res_obj = Path(results_xml)
+    # res_path = res_obj.name
+    new_name = res_obj.parts[-2]  # extracts filename from XML just in case
+    if clever_naming:
+        with open(results_xml, encoding='utf-8') as file:
+            soup = bs4(file, 'lxml')
+            new_name = soup.find('package').string
+    cp_result = os.path.join(outfile, f'{new_name}.xml')
+    # cp_path = Path(cp_result)
+    # print(f'Copying {res_path} to {cp_path}')
     shutil.copyfile(results_xml, cp_result)
 
 
-def copy(path: str, outfile: str):
+def copy(path: str, outfile: str, clever_naming=True):
     if not os.path.isdir(outfile):
         try:
             os.mkdir(outfile)
         except OSError:
             pass
-    copy_driver(path, outfile)
+    copy_driver(path, outfile, clever_naming=clever_naming)
 
 
-def bulkcopy(path: str, outfile: str) -> None:
+def bulkcopy(path: str, outfile: str, clever_naming=True) -> None:
     globpath = os.path.join(path, '*', '')
     dirs = glob.glob(globpath)
     target = os.path.join(path, outfile, '')
@@ -42,7 +47,7 @@ def bulkcopy(path: str, outfile: str) -> None:
     # print(dirs)
     for dir in dirs:
         try:
-            copy_driver(dir, outfile)
+            copy_driver(dir, outfile, clever_naming=clever_naming)
         except FileNotFoundError as fnfe:
             failures += 1
             print(fnfe)

@@ -9,7 +9,10 @@ def unpack(file: str) -> None:
     '''
     Decompiles a file using APKtool
     '''
-    subprocess.run(["apktool", 'd', '-o', f'{file[:-4]}', file], shell=True)
+    subprocess.run(["apktool", 'd', '-o', f'{file[:-4]}', file],
+                   shell=True,
+                   stdout=subprocess.DEVNULL,
+                   stderr=subprocess.STDOUT)
 
 
 def unpacker(dir, num_threads):
@@ -19,7 +22,6 @@ def unpacker(dir, num_threads):
     '''
     globpath = os.path.join(dir, '*.apk')
     apks = glob.glob(globpath)
-    # return apks
     unpackers: List[Unpacker] = []
     for i in range(num_threads):
         unpacker = Unpacker(apk_list=apks[i::num_threads])
