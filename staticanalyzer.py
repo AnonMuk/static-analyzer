@@ -1,5 +1,7 @@
 import argparse
+from pathlib import Path
 
+import bulkprocessing
 import copier
 import manifestanalysis
 import unpacker
@@ -33,41 +35,30 @@ if __name__ == '__main__':
     commands.add_argument('-u', '--unpack',
                           help="Unpack APKs.")
     commands.add_argument('-f', '--full',
-                          help='Unpack and Process APKs. ' +
-                                'Defaults to 8 APKtool threads and ' +
-                                '1500 profiler threads in bulk mode.')
-    parser.add_argument('-b', '--bulk',
-                        help="To bulk process, use the directory containing " +
-                        "ALL target files/folders.",
-                        action="store_true")
-    parser.add_argument('-t', '--threads',
-                        help='Specifies the number of threads. Defaults to 1.',
-                        type=int, default=1)
+                          help='Unpack and Process ONE APK. ')
+    commands.add_argument('-b', '--bulk',
+                          help="To bulk process, use the directory " +
+                          "containing ALL target files/folders.")
     parser.add_argument('-o', '--outfile',
                         help='output file for bulk analysis, ' +
                         f'defaults to {results_file}',
                         default=results_file)
     args = parser.parse_args()
     # print(args)
-    if args.bulk:
+    if args.bulk is not None:
         print("Bulk Mode Enabled. Go cook a meal and come back.")
-        if args.unpack is not None:
-            print("Unpacking APKs...")
-            unpacker.unpacker(args.unpack, args.threads)
-        if args.analyze is not None:
-            print("Analyzing Files:")
-            manifestanalysis.bulk_handler(args.analyze, args.threads)
-            copier.bulkcopy(args.analyze, args.outfile)
-        if args.full is not None:
-            print('bulk analysis does not support full processing.')
-    else:
-        if args.unpack is not None:
-            if args.unpack[-4:] != '.apk':
-                parser.error(f'{args.unpack} is not a valid .apk file')
-            unpacker.unpack(args.unpack)
-        if args.analyze is not None:
-            analysis = manifestanalysis.analysis(args.analyze)
-        if args.full is not None:
-            unpacker.unpack(args.full)
-            manifestanalysis.analysis(args.full[:-4])
-            copier.copy(args.full[:-4], args.outfile)
+        out = Path(args.bulk) / args.outfile
+        bulkprocessing.bulk_process(args.bulk, str(out), 8)
+    elif args.unpack is not None:
+        if args.unpack[-4:] != '.apk':
+            parser.error(f'{args.unpack} is not a valid .apk file')
+        unpacker.unpack(args.unpack)
+    elif args.analyze is not None:
+        analysis = manifestanalysis.analysis(args.analyze)
+    elif args.full is not None:
+        unpacker.unpack(args.full)
+        manifestanalysis.analysis(args.full[:-4])
+        parent = Path(args.full).parent
+        out = parent / args.outfile
+        # print(out)
+        copier.copy(args.full[:-4], str(out))
