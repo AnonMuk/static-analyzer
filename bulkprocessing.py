@@ -40,14 +40,23 @@ class BulkAnalyzer:
         # print(f'{self.thread.name}: {count} of {self.total_paths}')
         for apk in self.paths:
             apk_path = Path(apk)
-            print(f'{self.thread.name}: unpacking {apk_path.name}')
-            unpacker.unpack(apk)
-            print(f'{self.thread.name}: analyzing APK')
-            manifestanalysis.analysis(apk[:-4])
-            print(f'{self.thread.name}: Copying Results')
-            copier.copy(path=apk[:-4],
-                        outfile=self.outfile,
-                        clever_naming=False)
+            try:
+                print(f'{self.thread.name}: unpacking {apk_path.name}')
+                unpacker.unpack(apk)
+            except Exception:
+                print("Unpacker error. Continuing.")
+            try:
+                print(f'{self.thread.name}: analyzing APK')
+                manifestanalysis.analysis(apk[:-4])
+            except Exception:
+                print('Analysis error. Continuing.')
+            try:
+                print(f'{self.thread.name}: Copying Results')
+                copier.copy(path=apk[:-4],
+                            outfile=self.outfile,
+                            clever_naming=False)
+            except Exception:
+                print('Copy Error. Continuing.')
             count += 1
             print(f'{self.thread.name}: {count} of {self.total_paths} ' +
                   f'({round(100 * count/self.total_paths, 3)}% processed)')
