@@ -1,5 +1,6 @@
 from glob import glob
 import os
+from pathlib import Path
 from threading import Thread
 from typing import List
 
@@ -24,8 +25,7 @@ def bulk_process(dir: str, outfile: str, num_threads: int):
     for processor in processors:
         if processor.thread.is_alive():
             processor.thread.join(100)
-    # print("All APKs processing, going to copy.")
-    # copier.bulkcopy(dir, outfile)
+    print("All APKs processed.")
 
 
 class BulkAnalyzer:
@@ -38,8 +38,9 @@ class BulkAnalyzer:
     def do_everything_but_smarter(self):
         count = 1
         for apk in self.paths:
+            apk_path = Path(apk)
             print(f'{self.thread.name}: {count} of {self.total_paths}')
-            print(f'{self.thread.name}: unpacking {apk}')
+            print(f'{self.thread.name}: unpacking {apk_path.name}')
             unpacker.unpack(apk)
             print(f'{self.thread.name}: analyzing APK')
             manifestanalysis.analysis(apk[:-4])

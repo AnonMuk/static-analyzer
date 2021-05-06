@@ -12,7 +12,7 @@ def copy_driver(path, outfile):
         soup = bs4(file, 'lxml')
         new_name = soup.find('package').string
         cp_result = os.path.join(outfile, f'{new_name}.xml')
-        print(f'Copying {results_xml} to {cp_result}')
+        # print(f'Copying {results_xml} to {cp_result}')
     shutil.copyfile(results_xml, cp_result)
 
 

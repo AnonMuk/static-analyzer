@@ -43,12 +43,16 @@ if __name__ == '__main__':
                         help='output file for bulk analysis, ' +
                         f'defaults to {results_file}',
                         default=results_file)
+    parser.add_argument('-t', '--threads',
+                        help='number of parallel threads for processing. ' +
+                        'Default is 8',
+                        default=8, type=int)
     args = parser.parse_args()
     # print(args)
     if args.bulk is not None:
         print("Bulk Mode Enabled. Go cook a meal and come back.")
         out = Path(args.bulk) / args.outfile
-        bulkprocessing.bulk_process(args.bulk, str(out), 8)
+        bulkprocessing.bulk_process(args.bulk, str(out), args.threads)
     elif args.unpack is not None:
         if args.unpack[-4:] != '.apk':
             parser.error(f'{args.unpack} is not a valid .apk file')
