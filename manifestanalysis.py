@@ -101,13 +101,13 @@ def analysis(path: str, write_xml: bool) -> None:
     with open(filepath, encoding='utf-8') as manifest:  # using UTF-8
         soup = bs(manifest, "lxml")
         dict['package'] = manifest_name(soup)
-        manifest = {
+        analyzed_manifest = {
             'permissions': analyze_permissions(soup),
             'intents': analyze_intents(soup),
             'services': analyze_services(soup),
             'receivers': analyze_receivers(soup)
         }
-        dict['manifest'] = manifest
+        dict['manifest'] = analyzed_manifest
     with open(apkt_yaml, encoding='utf-8') as apktool_info:
         apkinfo = yaml.load(apktool_info, Loader=yaml.FullLoader)
         dict['sdkInfo'] = apkinfo['sdkInfo']  # no methods, a dict

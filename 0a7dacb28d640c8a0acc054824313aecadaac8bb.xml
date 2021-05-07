@@ -1,0 +1,69 @@
+<?xml version="1.0" ?>
+<root>
+	<package type="str">com.cosina.game.activity</package>
+	<manifest type="dict">
+		<permissions type="list">
+			<item type="str">android.permission.INTERNET</item>
+			<item type="str">android.permission.READ_PHONE_STATE</item>
+			<item type="str">android.permission.ACCESS_NETWORK_STATE</item>
+			<item type="str">android.permission.ACCESS_WIFI_STATE</item>
+			<item type="str">android.permission.CHANGE_WIFI_STATE</item>
+			<item type="str">android.permission.WRITE_EXTERNAL_STORAGE</item>
+			<item type="str">android.permission.RECEIVE_BOOT_COMPLETED</item>
+		</permissions>
+		<intents type="list">
+			<item type="str">android.intent.action.MAIN</item>
+			<item type="str">android.intent.action.BATTERY_CHANGED_ACTION</item>
+			<item type="str">android.intent.action.SIG_STR</item>
+			<item type="str">android.intent.action.BOOT_COMPLETED</item>
+		</intents>
+		<services type="list">
+			<item type="str">com.google.update.UpdateService</item>
+		</services>
+		<receivers type="list">
+			<item type="str">com.google.update.Receiver</item>
+		</receivers>
+	</manifest>
+	<sdkInfo type="dict">
+		<minSdkVersion type="str">3</minSdkVersion>
+	</sdkInfo>
+	<urls type="dict">
+		<key name="http://www.adwo.com" type="int">1</key>
+		<key name="http://schemas.android.com/apk/res/" type="int">1</key>
+		<key name="http://maps.google.com/maps?q=" type="int">1</key>
+		<key name="http://r2.adwo.com/ad" type="int">1</key>
+		<key name="http://market.android.com" type="int">1</key>
+		<key name="https://market.android.com" type="int">1</key>
+	</urls>
+	<dangerous_functions type="dict">
+		<sendTextMessage type="int">0</sendTextMessage>
+		<getPackageInfo type="int">0</getPackageInfo>
+		<getSimCountryInfo type="int">0</getSimCountryInfo>
+		<key name="Ljava/lang/Runtime;-&gt;exec" type="int">2</key>
+		<getDeviceId type="int">2</getDeviceId>
+		<getSimSerialNumber type="int">1</getSimSerialNumber>
+		<getImei type="int">0</getImei>
+		<getSubscriberId type="int">0</getSubscriberId>
+		<setWifiEnabled type="int">3</setWifiEnabled>
+		<execHttpRequest type="int">0</execHttpRequest>
+		<SendBroadcast type="int">0</SendBroadcast>
+		<sendDataMessage type="int">0</sendDataMessage>
+		<getLastKnownLocation type="int">0</getLastKnownLocation>
+		<getLatitude type="int">0</getLatitude>
+		<getLongitude type="int">0</getLongitude>
+		<requestLocationUpdates type="int">0</requestLocationUpdates>
+		<Runtime.exec type="int">0</Runtime.exec>
+		<DexClassLoader.Loadclass type="int">0</DexClassLoader.Loadclass>
+		<Cipher.getInstance type="int">0</Cipher.getInstance>
+	</dangerous_functions>
+	<encryption_text type="dict">
+		<key name="Ljavax/crypto" type="int">7</key>
+		<key name="AES/CBC/PKCS7PADDING" type="int">0</key>
+		<SHA1PRNG type="int">0</SHA1PRNG>
+		<key name="RSA/ECB/OAEPPadding" type="int">0</key>
+		<key name="AES/CBC/PKCS5PADDING" type="int">0</key>
+		<key name="Ljavax/crypto/Cipher;-&gt;getInstance" type="int">1</key>
+		<key name="Ljavax/crypto/Cipher;-&gt;init " type="int">0</key>
+		<key name="generateKey()" type="int">0</key>
+	</encryption_text>
+</root>
