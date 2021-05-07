@@ -37,7 +37,7 @@ if __name__ == '__main__':
                         action='store_true',
                         help='Uses XML for analysis results.')
     args = parser.parse_args()
-    print(args)
+    # print(args)
     if args.bulk is not None:
         print("Bulk Mode Enabled. Go cook a meal and come back.")
         out = Path(args.bulk) / args.outfile
