@@ -6,31 +6,43 @@ from pathlib import Path
 from bs4 import BeautifulSoup as bs4
 
 
-def copy_driver(path, outfile, clever_naming=True):
-    results_xml = os.path.join(path, 'result.xml')
-    res_obj = Path(results_xml)
+def copy_driver(path: str,
+                outfile: str,
+                clever_naming=True,
+                is_xml=False):
+    if is_xml:
+        results = os.path.join(path, 'result.xml')
+    else:
+        results = os.path.join(path, 'result.json')
+    res_obj = Path(results)
     # res_path = res_obj.name
-    new_name = res_obj.parts[-2]  # extracts filename from XML just in case
+    new_name = res_obj.parts[-2]  # extracts filename from results just in case
     if clever_naming:
-        with open(results_xml, encoding='utf-8') as file:
+        with open(results, encoding='utf-8') as file:
             soup = bs4(file, 'lxml')
             new_name = soup.find('package').string
-    cp_result = os.path.join(outfile, f'{new_name}.xml')
+    if is_xml:
+        cp_result = os.path.join(outfile, f'{new_name}.xml')
+    else:
+        cp_result = os.path.join(outfile, f'{new_name}.json')
     # cp_path = Path(cp_result)
-    # print(f'Copying {res_path} to {cp_path}')
-    shutil.copyfile(results_xml, cp_result)
+    # print(f'Copying {res_obj} to {cp_path}')
+    shutil.copyfile(results, cp_result)
 
 
-def copy(path: str, outfile: str, clever_naming=True):
+def copy(path: str, outfile: str,
+         clever_naming=True,
+         is_xml=False):
     if not os.path.isdir(outfile):
         try:
             os.mkdir(outfile)
         except OSError:
             pass
-    copy_driver(path, outfile, clever_naming=clever_naming)
+    copy_driver(path, outfile, clever_naming=clever_naming, is_xml=is_xml)
 
 
-def bulkcopy(path: str, outfile: str, clever_naming=True) -> None:
+def bulkcopy(path: str, outfile: str,
+             clever_naming=True, is_xml=False) -> None:
     globpath = os.path.join(path, '*', '')
     dirs = glob.glob(globpath)
     target = os.path.join(path, outfile, '')
@@ -47,7 +59,8 @@ def bulkcopy(path: str, outfile: str, clever_naming=True) -> None:
     # print(dirs)
     for dir in dirs:
         try:
-            copy_driver(dir, outfile, clever_naming=clever_naming)
+            copy_driver(dir, outfile,
+                        clever_naming=clever_naming, is_xml=is_xml)
         except FileNotFoundError as fnfe:
             failures += 1
             print(fnfe)

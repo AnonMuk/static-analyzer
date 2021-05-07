@@ -9,13 +9,13 @@ import unpacker
 import copier
 
 
-def bulk_process(dir: str, outfile: str, num_threads: int):
+def bulk_process(dir: str, outfile: str, num_threads: int, is_xml: bool):
     globpath = os.path.join(dir, '*.apk')
     files = glob(globpath)
     processors: List[BulkAnalyzer] = []
     for i in range(num_threads):
         processor = BulkAnalyzer(target_filepaths=files[i::num_threads],
-                                 outfile=outfile)
+                                 outfile=outfile, is_xml=is_xml)
         processor.thread.start()
         processors.append(processor)
     for processor in processors:
@@ -29,7 +29,8 @@ def bulk_process(dir: str, outfile: str, num_threads: int):
 
 
 class BulkAnalyzer:
-    def __init__(self, target_filepaths, outfile):
+    def __init__(self, target_filepaths, outfile, is_xml=False):
+        self.is_xml = is_xml
         self.paths = target_filepaths
         self.total_paths = len(target_filepaths)
         self.thread = Thread(target=self.do_everything_but_smarter)
@@ -47,14 +48,15 @@ class BulkAnalyzer:
                 print("Unpacker error. Continuing.")
             try:
                 print(f'{self.thread.name}: analyzing APK')
-                manifestanalysis.analysis(apk[:-4])
+                manifestanalysis.analysis(apk[:-4], write_xml=self.is_xml)
             except Exception:
                 print('Analysis error. Continuing.')
             try:
                 print(f'{self.thread.name}: Copying Results')
                 copier.copy(path=apk[:-4],
                             outfile=self.outfile,
-                            clever_naming=False)
+                            clever_naming=False,
+                            is_xml=self.is_xml)
             except Exception:
                 print('Copy Error. Continuing.')
             count += 1

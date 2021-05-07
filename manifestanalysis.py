@@ -1,3 +1,4 @@
+import json
 import os
 from glob import glob
 from threading import Thread
@@ -89,14 +90,13 @@ def analyze_receivers(soup: bs) -> list:
     return receivers
 
 
-def analysis(path: str) -> None:
+def analysis(path: str, write_xml: bool) -> None:
     '''
     takes filepath and does analysis.
     '''
     dict = {}
     filepath = os.path.join(path, 'AndroidManifest.xml')
     apkt_yaml = os.path.join(path, 'apktool.yml')
-    results = os.path.join(path, 'result.xml')
     # print(f'Processing {filepath} and {apkt_yaml}, results to {results}.')
     with open(filepath, encoding='utf-8') as manifest:  # using UTF-8
         soup = bs(manifest, "lxml")
@@ -115,19 +115,32 @@ def analysis(path: str) -> None:
     dict['urls'] = smali_results['urls']
     dict['dangerous_functions'] = smali_results['dangerous']
     dict['encryption_text'] = smali_results['encryption']
-    write_results(results, dict)
+    if write_xml:
+        results = os.path.join(path, 'result.xml')
+        write_results_to_XML(results, dict)
+    else:
+        results = os.path.join(path, 'result.json')
+        write_results_to_json(results, dict)
+
     # print(f'{path} processed.')
 
 
-def write_results(results, dict):
+def write_results_to_XML(results, dict):
     with open(results, 'w', encoding='utf-8') as outfile:
         xml = dicttoxml(dict)
         dom = parseString(xml)
         outfile.write(dom.toprettyxml())
 
 
+def write_results_to_json(results, dict):
+    with open(results, "w", encoding='utf=8') as outfile:
+        out = json.dumps(dict)
+        outfile.write(out)
+
+
 class Analysis:
-    def __init__(self, target_filepaths):
+    def __init__(self, target_filepaths, use_xml=False):
+        self.write_xml = use_xml
         self.paths = target_filepaths
         self.total_paths = len(target_filepaths)
         self.thread = Thread(target=self.bulk_analyze)
@@ -138,7 +151,7 @@ class Analysis:
             print(f'{self.thread.name}: ' +
                   f'File {current_file} of {self.total_paths}: {path}')
             try:
-                analysis(path)
+                analysis(path, self.write_xml)
             except Exception as e:
                 print(f'Error {e} on {path}, continuing.')
             current_file += 1
